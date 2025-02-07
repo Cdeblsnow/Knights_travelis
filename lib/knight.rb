@@ -8,9 +8,9 @@ class Knight
   end
 
   def build_board(x = 0, y = 0)
-    if y >= 8
+    if y >= 2
       return hash
-    elsif x >= 8
+    elsif x >= 2 # rubocop:disable Lint/DuplicateBranch
       return hash
     end
 
@@ -22,5 +22,22 @@ class Knight
     build_board(x, y + 1)
     build_board(x + 1, y)
     @board << hash unless @board.include?(hash)
+  end
+
+  def move(start, final, position = nil, hash_value = nil, arr = [])
+    return if position == final
+
+    @board.each do |hash|
+      hash.each do |key, value|
+        position = key
+        hash_value = value
+        break if position == start
+      end
+      break if position == start
+    end
+
+    move(start, final, position, hash_value, arr)
+    arr << hash_value
+    move(start, final, position, hash_value, arr)
   end
 end
