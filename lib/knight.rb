@@ -7,37 +7,31 @@ class Knight
     build_board
   end
 
-  def build_board(x = 0, y = 0)
+  def move(start, final, position = nil)
+    return puts "Invalid input" if start[0] > 7 || start[1] > 7
+    return puts "Invalid input" if final[0] > 7 || final[1] > 7
+
+    m = { moves: [] }
+    while position != final
+    end
+  end
+
+  def knight_lis_of_moves(x = 0, y = 0)
     if y >= 2
       return hash
     elsif x >= 2 # rubocop:disable Lint/DuplicateBranch
       return hash
     end
 
-    hash = { [x, y] => [] }
-    hash[[x, y]].push([x, y + 1]) if y + 1 <= 7 # add top
-    hash[[x, y]].push([x + 1, y]) if x + 1 <= 7 # add right
-    hash[[x, y]].push([x, y - 1]) if y - 1 >= 0 # add bottom
-    hash[[x, y]].push([x - 1, y]) if x - 1 >= 0 # add left
-    build_board(x, y + 1)
-    build_board(x + 1, y)
+    hash_y = { y: [] }
+    hash_y[:y].push([y + 2]) if y + 2 <= 7 # add top
+    hash_y[:y].push([y - 2]) if y - 2 >= 0 # add bottom
+    # each top and bottom have right and left x value
+    hash_x = { x: [] }
+    hash_x[:x].push(x - 1) if x - 1 >= 0 # left
+    hash_x[:x].push(x + 1) if x + 1 <= 7 # right
+    [x + 1,y + 2 ],[x-1,y+2],[x+1,y-2],[x-1,y-2],[x+2,y+1],[x+2,y-1],[x-2,y+1],[x-2,y-1]
+
     @board << hash unless @board.include?(hash)
-  end
-
-  def move(start, final, position = nil, hash_value = nil, arr = [])
-    return if position == final
-
-    @board.each do |hash|
-      hash.each do |key, value|
-        position = key
-        hash_value = value
-        break if position == start
-      end
-      break if position == start
-    end
-
-    move(start, final, position, hash_value, arr)
-    arr << hash_value
-    move(start, final, position, hash_value, arr)
   end
 end
