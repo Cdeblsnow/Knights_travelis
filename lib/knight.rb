@@ -27,28 +27,31 @@ class Knight
       end
 
       visited << arr[0]
-      position = arr[0]
+      position = arr[-1]
+      break if position == final
+
       arr = arr.drop(1)
     end
-    p visited
+    arr.unshift(start)
+    p arr
   end
 
   def next_vertex(arr, rejected, hold = [])
-    if arr[0] + 1 <= 7 && arr[1] + 2 <= 7 && rejected.include?(arr[0]) == false # top_right
+    if arr[0] + 1 <= 7 && arr[1] + 2 <= 7 && rejected.include?([arr[0] + 1, arr[1] + 2]) == false # top_right
       hold << [arr[0] + 1, arr[1] + 2]
-    elsif arr[0] + 2 <= 7 && arr[1] + 1 <= 7 && rejected.include?(arr[0]) == false # right_up
+    elsif arr[0] + 2 <= 7 && arr[1] + 1 <= 7 && rejected.include?([arr[0] + 2, arr[1] + 1]) == false # right_up
       hold << [arr[0] + 2, arr[1] + 1]
-    elsif arr[0] + 2 <= 7 && arr[1] - 1 >= 0 && rejected.include?(arr[0]) == false # right_down
+    elsif arr[0] + 2 <= 7 && arr[1] - 1 >= 0 && rejected.include?([arr[0] + 2, arr[1] - 1]) == false # right_down
       hold <<  [arr[0] + 2, arr[1] - 1]
-    elsif arr[0] + 1 <= 7 && arr[1] - 2 >= 0 && rejected.include?(arr[0]) == false # bottom_right
+    elsif arr[0] + 1 <= 7 && arr[1] - 2 >= 0 && rejected.include?([arr[0] + 1, arr[1] - 2]) == false # bottom_right
       hold <<  [arr[0] + 1, arr[1] - 2]
-    elsif arr[0] - 1 >= 0 && arr[1] - 2 >= 0 && rejected.include?(arr[0]) == false # bottom_left
+    elsif arr[0] - 1 >= 0 && arr[1] - 2 >= 0 && rejected.include?([arr[0] - 1, arr[1] - 2]) == false # bottom_left
       hold <<  [arr[0] - 1, arr[1] - 2]
-    elsif arr[0] - 2 >= 0 && arr[1] - 1 >= 0 && rejected.include?(arr[0]) == false # left_down
+    elsif arr[0] - 2 >= 0 && arr[1] - 1 >= 0 && rejected.include?([arr[0] - 2, arr[1] - 1]) == false # left_down
       hold <<  [arr[0] - 2, arr[1] - 1]
-    elsif arr[0] - 2 >= 0 && arr[1] + 1 <= 7 && rejected.include?(arr[0]) == false # left_up
+    elsif arr[0] - 2 >= 0 && arr[1] + 1 <= 7 && rejected.include?([arr[0] - 2, arr[1] + 1]) == false # left_up
       hold <<  [arr[0] - 2, arr[1] + 1]
-    elsif arr[0] - 1 >= 0 && arr[1] + 2 <= 7 && rejected.include?(arr[0]) == false # top_left
+    elsif arr[0] - 1 >= 0 && arr[1] + 2 <= 7 && rejected.include?([arr[0] - 1, arr[1] + 2]) == false # top_left
       hold <<  [arr[0] - 1, arr[1] + 2]
     end
     hold[-1]
