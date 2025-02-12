@@ -1,0 +1,82 @@
+def append(coordinate)
+    new_vertex = Vertex.new(coordinate)
+    if @coordinate[0] < new_vertex.coordinate[0] # compare x coordinate
+      @right = new_vertex
+      new_vertex.left = 
+    elsif @coordinate[0] > new_vertex.coordinate[0]
+      @left = new_vertex
+    elsif @coordinate[1] < new_vertex.coordinate[0] # compare y coordinate
+      @bottom = new_vertex
+    else
+      @top = new_vertex
+    end
+  end
+
+  def build_board(x = 0)
+    2.times do |row_index|
+      y = 0
+      2.times { |column_index| [x, y] && y += 1 }
+      x += 1
+    end
+  end
+
+
+  def knight_lis_of_moves(x = 0, y = 0)
+    if y >= 2
+      return hash
+    elsif x >= 2 # rubocop:disable Lint/DuplicateBranch
+      return hash
+    end
+
+    hash_y = { y: [] }
+    hash_y[:y].push([y + 2]) if y + 2 <= 7 # add top
+    hash_y[:y].push([y - 2]) if y - 2 >= 0 # add bottom
+    # each top and bottom have right and left x value
+    hash_x = { x: [] }
+    hash_x[:x].push(x - 1) if x - 1 >= 0 # left
+    hash_x[:x].push(x + 1) if x + 1 <= 7 # right
+    [x + 1,y + 2 ],[x-1,y+2],[x+1,y-2],[x-1,y-2],[x+2,y+1],[x+2,y-1],[x-2,y+1],[x-2,y-1]
+
+    @board << hash unless @board.include?(hash)
+  end
+
+
+  def path(start, final)
+    arr = [start]
+    position = nil
+
+    while position != final
+      break if arr[0].nil?
+
+      arr << [arr[0][0] + 1, arr[0][1] + 2] if arr[0][0] + 1 <= 7 && arr[0][1] + 2 <= 7 # top_right
+      break if arr[-1] == final
+
+      arr << [arr[0][0] + 2, arr[0][1] + 1] if arr[0][0] + 2 <= 7 && arr[0][1] + 1 <= 7 # right_up
+      break if arr[-1] == final
+
+      arr << [arr[0][0] + 2, arr[0][1] - 1] if arr[0][0] + 2 <= 7 && arr[0][1] - 1 >= 0 # right_down
+      break if arr[-1] == final
+
+      arr << [arr[0][0] + 1, arr[0][1] - 2] if arr[0][0] + 1 <= 7 && arr[0][1] - 2 >= 0 # bottom_right
+      break if arr[-1] == final
+
+      arr << [arr[0][0] - 1, arr[0][1] - 2] if arr[0][0] - 1 >= 0 && arr[0][1] - 2 >= 0 # bottom_left
+      break if arr[-1] == final
+
+      arr << [arr[0][0] - 2, arr[0][1] - 1] if arr[0][0] - 2 >= 0 && arr[0][1] - 1 >= 0 # left_down
+      break if arr[-1] == final
+
+      arr << [arr[0][0] - 2, arr[0][1] + 1] if arr[0][0] - 2 >= 0 && arr[0][1] + 1 <= 7 # left_up
+      break if arr[-1] == final
+
+      arr << [arr[0][0] - 1, arr[0][1] + 2] if arr[0][0] - 1 >= 0 && arr[0][1] + 2 <= 7 # top_left
+      break if arr[-1] == final
+
+      position = arr[0]
+
+      arr = arr.drop(1)
+    end
+    arr
+  end
+
+  
