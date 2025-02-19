@@ -7,55 +7,48 @@ class Knight
     @moves = []
   end
 
-  def move(start, final, position = nil)
+  def move(start, final)
     return puts "Invalid input" if start[0] > 7 || start[1] > 7
     return puts "Invalid input" if final[0] > 7 || final[1] > 7
 
-    arr = [start]
+    queue = [start]
     visited = []
-    rejected = []
-    while position != final
-      break if arr[0].nil?
+    path = []
+    while queue.include?(final) == false
+      break if queue[0].nil?
 
-      current = next_vertex(arr[-1], rejected, visited)
-
-      current = visited[-1] if current.nil?
-
-      if current[0] > final[0] || current[1] > final[1] # check if it is out of range
-        arr.unshift(current)
-        rejected << current
-      else
-        arr << current
-        visited << current
+      next_vertex(queue[0]).each { |coordinate| (queue << coordinate) && (visited << coordinate) }
+      visited.each do |coordinate|
+        path << [queue[0], coordinate]
       end
-
-      position = arr[-1]
-      break if position == final
-
-      arr = arr.drop(1)
+      queue = queue.drop(1)
     end
-
-    p visited
+    refine_path(start, final, path)
   end
 
-  def next_vertex(arr, rejected, visited, hold = [])
-    if (arr[0] + 1 <= 7 && arr[1] + 2 <= 7) && rejected.include?([arr[0] + 1, arr[1] + 2]) == false && visited.include?([arr[0] + 1, arr[1] + 2]) == false # top_right
-      hold << [arr[0] + 1, arr[1] + 2]
-    elsif (arr[0] + 2 <= 7 && arr[1] + 1 <= 7) && rejected.include?([arr[0] + 2, arr[1] + 1]) == false && visited.include?([arr[0] + 2, arr[1] + 1]) == false # right_up
-      hold << [arr[0] + 2, arr[1] + 1]
-    elsif (arr[0] + 2 <= 7 && arr[1] - 1 >= 0) && rejected.include?([arr[0] + 2, arr[1] - 1]) == false && visited.include?([arr[0] + 2, arr[1] - 1]) == false # right_down
-      hold <<  [arr[0] + 2, arr[1] - 1]
-    elsif (arr[0] + 1 <= 7 && arr[1] - 2 >= 0) && rejected.include?([arr[0] + 1, arr[1] - 2]) == false && visited.include?([arr[0] + 1, arr[1] - 2]) == false # bottom_right
-      hold <<  [arr[0] + 1, arr[1] - 2]
-    elsif (arr[0] - 1 >= 0 && arr[1] - 2 >= 0) && rejected.include?([arr[0] - 1, arr[1] - 2]) == false && visited.include?([arr[0] - 1, arr[1] - 2]) == false # bottom_left
-      hold <<  [arr[0] - 1, arr[1] - 2]
-    elsif (arr[0] - 2 >= 0 && arr[1] - 1 >= 0) && rejected.include?([arr[0] - 2, arr[1] - 1]) == false && visited.include?([arr[0] - 2, arr[1] - 1]) == false # left_down
-      hold <<  [arr[0] - 2, arr[1] - 1]
-    elsif (arr[0] - 2 >= 0 && arr[1] + 1 <= 7) && rejected.include?([arr[0] - 2, arr[1] + 1]) == false && visited.include?([arr[0] - 2, arr[1] + 1]) == false # left_up
-      hold <<  [arr[0] - 2, arr[1] + 1]
-    elsif (arr[0] - 1 >= 0 && arr[1] + 2 <= 7) && rejected.include?([arr[0] - 1, arr[1] + 2]) == false && visited.include?([arr[0] - 1, arr[1] + 2]) == false # top_left
-      hold <<  [arr[0] - 1, arr[1] + 2]
+  def next_vertex(coordinates, hold = [])
+    hold << [coordinates[0] + 1, coordinates[1] + 2] if coordinates[0] + 1 <= 7 && coordinates[1] + 2 <= 7 # top_right
+    hold << [coordinates[0] + 2, coordinates[1] + 1] if coordinates[0] + 2 <= 7 && coordinates[1] + 1 <= 7 # right_up
+    hold << [coordinates[0] + 2, coordinates[1] - 1] if coordinates[0] + 2 <= 7 && coordinates[1] - 1 >= 0 # right_down
+    hold << [coordinates[0] + 1, coordinates[1] - 2] if coordinates[0] + 1 <= 7 && coordinates[1] - 2 >= 0 # bottomright
+    hold << [coordinates[0] - 1, coordinates[1] - 2] if coordinates[0] - 1 >= 0 && coordinates[1] - 2 >= 0 # bottom_left
+    hold << [coordinates[0] - 2, coordinates[1] - 1] if coordinates[0] - 2 >= 0 && coordinates[1] - 1 >= 0 # left_down
+    hold << [coordinates[0] - 2, coordinates[1] + 1] if coordinates[0] - 2 >= 0 && coordinates[1] + 1 <= 7 # left_up
+    hold << [coordinates[0] - 1, coordinates[1] + 2] if coordinates[0] - 1 >= 0 && coordinates[1] + 2 <= 7 # top_left
+
+    hold
+  end
+
+  def refine_path(start, final, path)
+    final_path = []
+    final_path << path.find { |coordinate| coordinate.include?(final) }
+    path -= final_path
+
+    until final_path.flatten(1).any? { |coordinate| coordinate == start }
+      final_path << path.find do |coordinate|
+        coordinate.include?(final_path[0][0])
+      end
     end
-    hold[-1]
+    final_path.flatten(1).uniq.sort.each { |coordinate| p coordinate }
   end
 end
