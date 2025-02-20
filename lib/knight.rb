@@ -23,6 +23,7 @@ class Knight
       end
       queue = queue.drop(1)
     end
+    path = path.uniq
     refine_path(start, final, path)
   end
 
@@ -42,12 +43,11 @@ class Knight
   def refine_path(start, final, path)
     final_path = []
     final_path << path.find { |coordinate| coordinate.include?(final) }
-    path -= final_path
 
     until final_path.flatten(1).any? { |coordinate| coordinate == start }
-      final_path << path.find do |coordinate|
-        coordinate.include?(final_path[0][0])
-      end
+      path -= final_path
+      final_path << path.find { |coordinate| coordinate.include?(final_path[0][0]) }
+      final_path = final_path.sort_by { |coordinate| [coordinate.first, coordinate.last] }
     end
     final_path.flatten(1).uniq.sort.each { |coordinate| p coordinate }
   end
